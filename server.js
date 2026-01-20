@@ -15,8 +15,6 @@ const dbConfig={
     queueLimit:0,
 };
 
-//wow
-
 //initialise express app
 const app = express();
 //helps app to read JSON
