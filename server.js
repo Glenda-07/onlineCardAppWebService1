@@ -83,7 +83,7 @@ app.put('/editcard', async(req, res) => {
     try {
         let connection = await mysql.createConnection(dbConfig);
         await connection.execute(
-            'UPDATE cards SET card_name = ?, card_pic = ? WHERE card_id = ?',
+            'UPDATE cards SET card_name = ?, card_pic = ? WHERE id = ?',
             [card_name, card_pic,card_id]
         );
         await connection.end();
