@@ -25,6 +25,9 @@ app.listen(port, () => {
     console.log('Server started on port', port );
 });
 
+//wow
+
+
 const cors = require("cors");
 const allowedOrigins = [
     "http://localhost:3000",
