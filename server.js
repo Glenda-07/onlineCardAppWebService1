@@ -96,22 +96,37 @@ app.put('/editcard', async(req, res) => {
 })
 
 
-app.get('/deletecard/:id', async(req, res) => {
-    const card_id = req.params.id;
+//
+// app.get('/deletecard/:id', async(req, res) => {
+//     const card_id = req.params.id;
+//
+//     if (!card_id) { return res.status(400).json({ message: 'Missing card id' }); }
+//
+//     try {
+//         let connection = await mysql.createConnection(dbConfig);
+//         await connection.execute(
+//             'DELETE FROM cards WHERE card_id = ?',
+//             [card_id]
+//         );
+//         await connection.end();
+//
+//         res.status(200).json({ message: 'Card with ID '+ card_id +' deleted successfully' });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Server error - could not delete card with ID: '+ card_id})
+//     }
+// })
 
-    if (!card_id) { return res.status(400).json({ message: 'Missing card id' }); }
 
-    try {
+// Example Route: Delete a card
+app.delete('/deletecard/:id', async (req, res) => {
+    const { id } = req.params;
+    try{
         let connection = await mysql.createConnection(dbConfig);
-        await connection.execute(
-            'DELETE FROM cards WHERE card_id = ?',
-            [card_id]
-        );
-        await connection.end();
-
-        res.status(200).json({ message: 'Card with ID '+ card_id +' deleted successfully' });
+        await connection.execute('DELETE FROM cards WHERE id=?', [id]);
+        res.status(201).json({ message: 'Card ' + id + ' deleted successfully!' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Server error - could not delete card with ID: '+ card_id})
+        res.status(500).json({ message: 'Server error - could not delete card ' + id });
     }
-})
+});
