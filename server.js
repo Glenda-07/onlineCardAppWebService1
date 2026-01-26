@@ -56,6 +56,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 app.post('/login', async (req, res) => {
+    console.log("JWT_SECRET:", JWT_SECRET);
     const { username, password } = req.body;
 
     if (username !== DEMO_USER.username || password !== DEMO_USER.password) {
@@ -76,11 +77,11 @@ app.post('/login', async (req, res) => {
 function requireAuth(req, res, next) {
     const authHeader = req.headers.authorization; // "Bearer TOKEN"
 
-    if (!header){
+    if (!authHeader){
         return res.status(401).json({ error: 'No token provided' });
     }
 
-    const [type,token] = header.split(' ');
+    const [type,token] = authHeader.split(' ');
     if (type !=="Bearer" || !token){
         return res.status(401).json({ error: 'Invalid authorization format' });
     }
