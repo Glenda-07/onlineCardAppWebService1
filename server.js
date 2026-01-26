@@ -47,6 +47,50 @@ app.use(
     })
 );
 
+const DEMO_USER = {id:1, username:'admin', password:'admin123', role:"admin"};
+
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET;
+
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    if (username !== DEMO_USER.username || password !== DEMO_USER.password) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign
+    ({ id: DEMO_USER.id, username: DEMO_USER.username },
+         JWT_SECRET, 
+         { expiresIn: '1h' },
+
+    );
+    res.json({ token } );
+}
+);
+
+//Middleware to protect routes
+function requireAuth(req, res, next) {
+    const authHeader = req.headers.authorization; // "Bearer TOKEN"
+
+    if (!header){
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const [type,token] = header.split(' ');
+    if (type !=="Bearer" || !token){
+        return res.status(401).json({ error: 'Invalid authorization format' });
+    }
+
+    try {
+        const payload = jwt.verify(token, JWT_SECRET);
+        req.user = payload; //attach user info to request
+        next(); 
+    }catch(err){
+        return res.status(401).json({ error: 'Invalid token' });
+    }
+}
+
 
 //example route: Get all cards
 app.get('/allcards',async (req,res)=>{
@@ -61,7 +105,7 @@ app.get('/allcards',async (req,res)=>{
 });
 
 //Example Route : Create new card
-app.post('/addcard', async(req, res) => {
+app.post('/addcard', requireAuth, async(req, res) => {
     const { card_name, card_pic } = req.body;
     try {
         let connection = await mysql.createConnection(dbConfig);
